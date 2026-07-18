@@ -11,6 +11,15 @@ class Todo(models.Model):
     class Meta:
         ordering = ["deadline"]
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        # não salva uma tarefa com data de entrega anterior à data atual
+        if self.deadline and self.deadline < date.today():
+            raise ValidationError({"deadline": "A data de entrega não pode ser anterior à data atual."})
+
+        super().clean()
+
     def mark_has_complete(self):
         if not self.finished_at:
             self.finished_at = date.today()
