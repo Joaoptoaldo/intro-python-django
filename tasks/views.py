@@ -2,17 +2,16 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, V
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-
+from .forms import TodoForm
 from .models import Todo
 
 
 class TodoListView(ListView):
     model = Todo
-
-
+    
 class TodoCreateView(CreateView):
     model = Todo
-    fields = ["title", "description", "deadline"]
+    form_class = TodoForm
     success_url = reverse_lazy("todo_list")
 
     def form_valid(self, form):
