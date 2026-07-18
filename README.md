@@ -55,6 +55,13 @@ Projeto feito para **estudos do framework Django**. A aplicação permite gerenc
 4. Inicie o servidor:
    - `python manage.py runserver`
 
+5. (Opcional) Acesse o Admin do Django
+   1. Crie um usuário admin:
+      - `python manage.py createsuperuser`
+   2. Acesse no navegador:
+      - http://127.0.0.1:8000/admin/
+
+
 ## Comandos úteis
 
 - Rodar testes:
