@@ -1,62 +1,94 @@
 {% extends 'base.html' %}
 
+{% block nav_active_list %}active{% endblock nav_active_list %}
+
 {% block page_title %}
-    Lista de Tarefas
+  Lista de Tarefas
 {% endblock page_title %}
 
 {% block content %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" role="alert">
-                {{ message }}
+  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1">Suas tarefas</h1>
+      <p class="text-body-secondary mb-0">Gerencie prazos, acompanhe o status e conclua o que importa</p>
+    </div>
+    <a href="{% url 'todo_create' %}" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm">
+      <i class="bi bi-plus-circle"></i>
+      Nova tarefa
+    </a>
+  </div>
+
+  {% if todo_list %}
+    <div class="row g-4">
+      {% for todo in todo_list %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex align-items-start justify-content-between gap-3">
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="fw-semibold">#{{ todo.pk }}</span>
+                    {% if todo.finished_at %}
+                      <span class="badge text-bg-success d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-check2-circle"></i> Concluída
+                      </span>
+                    {% else %}
+                      {% if todo.deadline < now %}
+                        <span class="badge text-bg-danger d-inline-flex align-items-center gap-1">
+                          <i class="bi bi-exclamation-triangle"></i> Atrasada
+                        </span>
+                      {% else %}
+                        <span class="badge text-bg-warning text-dark d-inline-flex align-items-center gap-1">
+                          <i class="bi bi-hourglass-split"></i> Pendente
+                        </span>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+
+                  <h2 class="h5 mb-2">{{ todo.title }}</h2>
+                  <p class="text-body-secondary mb-3">{{ todo.description }}</p>
+                </div>
+              </div>
+
+              <div class="mt-auto pt-2">
+                <div class="small text-body-secondary mb-2"><i class="bi bi-calendar3 me-2"></i>Criado em: <span class="fw-medium text-body">{{ todo.created_at }}</span></div>
+                <div class="small text-body-secondary mb-3"><i class="bi bi-calendar2-check me-2"></i>Prazo: <span class="fw-medium text-body">{{ todo.deadline }}</span></div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <a href="{% url 'todo_complete' pk=todo.pk %}" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 {% if todo.finished_at %}disabled{% endif %}">
+                    <i class="bi bi-check-lg"></i>
+                    Concluir
+                  </a>
+
+                  <a href="{% url 'todo_update' pk=todo.pk %}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 {% if todo.finished_at %}disabled{% endif %}">
+                    <i class="bi bi-pencil"></i>
+                    Editar
+                  </a>
+
+                  <a href="{% url 'todo_delete' pk=todo.pk %}" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-trash"></i>
+                    Excluir
+                  </a>
+                </div>
+              </div>
             </div>
-        {% endfor %}
-    {% endif %}
-
-    <h1>Lista de Tarefas</h1>
-
-    {% if todo_list %}
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Título</th>
-                <th scope="col">Críado em</th>
-                <th scope="col">Data de entrega</th>
-                <th scope="col">Finalizado em</th>
-                <th scope="col">Ações</th>
-            </tr>
-            </thead>
-            <tbody>
-                {% for todo in todo_list %}
-                    <tr>
-                        <th scope="row">{{ todo.pk }}</th>
-                        <td>{{ todo.title }}</td>
-                        <td>{{ todo.created_at }}</td>
-                        <td>{{ todo.deadline }}</td>
-                        <td>{{ todo.finished_at|default:"-" }}</td>
-                        <td>
-                            <a 
-                                href="{% url 'todo_complete' pk=todo.pk %}" 
-                                class="btn btn-primary btn-sm {% if todo.finished_at %}disabled{% endif %}"
-                            >
-                                Concluir
-                            </a>
-                            <a
-                                href="{% url 'todo_update' pk=todo.pk %}" 
-                                class="btn btn-secondary btn-sm {% if todo.finished_at %}disabled{% endif %}"
-                            >
-                                Editar
-                            </a>
-                            <a href="{% url 'todo_delete' pk=todo.pk %}" class="btn btn-danger btn-sm">Excluír</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Não há tarefas cadastradas</p>
-    {% endif %}
-
-    <a href="{% url 'todo_create' %}" class="btn btn-primary">Nova tarefa</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center p-5 border rounded-4 bg-white shadow-sm">
+      <div class="mx-auto" style="max-width: 520px;">
+        <div class="mb-3">
+          <i class="bi bi-emoji-frown fs-1 text-body-tertiary"></i>
+        </div>
+        <h2 class="h5">Nenhuma tarefa cadastrada</h2>
+        <p class="text-body-secondary mb-4">Crie sua primeira tarefa e comece a acompanhar seus prazos</p>
+        <a href="{% url 'todo_create' %}" class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2 shadow-sm">
+          <i class="bi bi-plus-circle"></i>
+          Criar primeira tarefa
+        </a>
+      </div>
+    </div>
+  {% endif %}
 {% endblock content %}
