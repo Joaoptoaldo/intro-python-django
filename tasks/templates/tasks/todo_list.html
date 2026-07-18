@@ -5,6 +5,14 @@
 {% endblock page_title %}
 
 {% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <h1>Lista de Tarefas</h1>
 
     {% if todo_list %}

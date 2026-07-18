@@ -7,7 +7,7 @@ class Todo(models.Model):
     description = models.TextField(verbose_name="Descrição", max_length=500, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     deadline = models.DateField(verbose_name="Data de entrega", null=False, blank=False)
-    finished_at = models.DateField(null=True)
+    finished_at = models.DateField(null=True, blank=True)
     class Meta:
         ordering = ["deadline"]
 
